@@ -1,27 +1,45 @@
 
+"""
+main.py
+=======
+Archivo principal del Sistema Integral de Gestión Software FJ.
+
+Ejecuta las pruebas de registro de clientes, creación de servicios,
+gestión de reservas y control de excepciones.
+"""
+
 from sistema import SistemaFJ
+
 from excepciones import (
     SistemaFJException,
     ClienteInvalidoException,
     ReservaInvalidaException,
     DuracionInvalidaException,
-    OperacionNoPermitidaException
+    OperacionNoPermitidaException,
+    CapacidadExcedidaException,
+    ServicioNoDisponibleException
 )
 
 
 def mostrar_titulo(texto):
+    """Muestra un título centrado en la consola."""
+
     print("\n" + "=" * 65)
     print(texto.center(65))
     print("=" * 65)
 
 
 def mostrar_resultado(numero, descripcion, exitoso=True):
+    """Muestra el resultado de cada operación."""
+
     estado = "CORRECTO" if exitoso else "ERROR CONTROLADO"
+
     print(f"\n[{estado}] Operación {numero}: {descripcion}")
 
 
-
 def main():
+    """Ejecuta las operaciones de prueba del sistema."""
+
     sistema = SistemaFJ()
 
     mostrar_titulo("SISTEMA INTEGRAL DE GESTION SOFTWARE FJ")
@@ -48,13 +66,16 @@ def main():
             "3101234567",
             "12345678"
         )
+
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(1, "Registro de cliente Carlos")
 
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(1, str(error), False)
 
     # OPERACION 2: Registrar segundo cliente
@@ -66,13 +87,16 @@ def main():
             "3119876543",
             "87654321"
         )
+
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(2, "Registro de cliente Maria")
 
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(2, str(error), False)
 
     # OPERACION 3: Intentar registrar correo invalido
@@ -88,7 +112,12 @@ def main():
     except ClienteInvalidoException as error:
         operaciones += 1
         fallidas_controladas += 1
-        mostrar_resultado(3, f"Validacion de correo: {error}", False)
+
+        mostrar_resultado(
+            3,
+            f"Validación de correo: {error}",
+            False
+        )
 
     # OPERACION 4: Crear servicios
     try:
@@ -107,7 +136,7 @@ def main():
         )
 
         asesoria = sistema.crear_servicio_asesoria(
-            "Asesoria tecnologica",
+            "Asesoría tecnológica",
             "tecnologia",
             "Laura Martinez",
             precio_base=80000
@@ -115,11 +144,13 @@ def main():
 
         operaciones += 1
         exitosas += 1
-        mostrar_resultado(4, "Creacion de tres servicios")
+
+        mostrar_resultado(4, "Creación de tres servicios")
 
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(4, str(error), False)
 
     # OPERACION 5: Crear y confirmar reserva de sala
@@ -140,6 +171,7 @@ def main():
 
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(
             5,
             f"Reserva de sala confirmada. Costo: ${costo:,.0f}"
@@ -148,17 +180,21 @@ def main():
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(5, str(error), False)
 
     # OPERACION 6: Consultar costo con impuesto
     try:
         if reserva1 is None:
-            raise ReservaInvalidaException("No existe la reserva de sala.")
+            raise ReservaInvalidaException(
+                "No existe la reserva de sala."
+            )
 
         costo = reserva1.calcular_costo_con_impuesto()
 
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(
             6,
             f"Costo con impuesto: ${costo:,.0f}"
@@ -167,13 +203,14 @@ def main():
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(6, str(error), False)
 
     # OPERACION 7: Crear y confirmar asesoria
     try:
         if cliente2 is None or asesoria is None:
             raise ReservaInvalidaException(
-                "No existen los datos necesarios para la asesoria."
+                "No existen los datos necesarios para la asesoría."
             )
 
         reserva2 = sistema.crear_reserva(
@@ -187,20 +224,24 @@ def main():
 
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(
             7,
-            f"Asesoria confirmada. Costo: ${costo:,.0f}"
+            f"Asesoría confirmada. Costo: ${costo:,.0f}"
         )
 
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(7, str(error), False)
 
     # OPERACION 8: Intentar reservar con duracion negativa
     try:
         if cliente1 is None or sala is None:
-            raise ReservaInvalidaException("No existen cliente o sala.")
+            raise ReservaInvalidaException(
+                "No existen cliente o sala."
+            )
 
         sistema.crear_reserva(
             cliente1,
@@ -212,12 +253,19 @@ def main():
     except DuracionInvalidaException as error:
         operaciones += 1
         fallidas_controladas += 1
-        mostrar_resultado(8, f"Duracion rechazada: {error}", False)
-    
+
+        mostrar_resultado(
+            8,
+            f"Duración rechazada: {error}",
+            False
+        )
+
     # OPERACION 9: Intentar superar capacidad de sala
     try:
         if cliente1 is None or sala is None:
-            raise ReservaInvalidaException("No existen cliente o sala.")
+            raise ReservaInvalidaException(
+                "No existen cliente o sala."
+            )
 
         reserva_capacidad = sistema.crear_reserva(
             cliente1,
@@ -230,20 +278,31 @@ def main():
 
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(
             9,
-            "La reserva supero una capacidad que debia rechazarse."
+            "La reserva superó una capacidad que debía rechazarse."
         )
 
-    except ReservaInvalidaException as error:
+    except CapacidadExcedidaException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(
             9,
             f"Capacidad excedida correctamente controlada: {error}",
             False
         )
 
+    except SistemaFJException as error:
+        operaciones += 1
+        fallidas_controladas += 1
+
+        mostrar_resultado(
+            9,
+            f"Error controlado: {error}",
+            False
+        )
 
     # OPERACION 10: Reservar equipos
     try:
@@ -269,7 +328,7 @@ def main():
             f"Alquiler de 2 equipos confirmado. Costo: ${costo:,.0f}"
         )
 
-    except Exception as error:
+    except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
 
@@ -282,12 +341,15 @@ def main():
     # OPERACION 11: Consultar equipos disponibles
     try:
         if equipo is None:
-            raise ReservaInvalidaException("No existe el servicio de equipos.")
+            raise ReservaInvalidaException(
+                "No existe el servicio de equipos."
+            )
 
         disponibles = equipo.cantidad_disponible
 
         operaciones += 1
         exitosas += 1
+
         mostrar_resultado(
             11,
             f"Equipos disponibles: {disponibles}"
@@ -296,39 +358,49 @@ def main():
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(11, str(error), False)
 
     # OPERACION 12: Cancelar reserva de equipos
     try:
         if reserva3 is None:
-            raise ReservaInvalidaException("No existe la reserva de equipos.")
+            raise ReservaInvalidaException(
+                "No existe la reserva de equipos."
+            )
 
         sistema.cancelar_reserva(
             reserva3,
-            "Cancelacion solicitada por el cliente"
+            "Cancelación solicitada por el cliente"
         )
 
         operaciones += 1
         exitosas += 1
-        mostrar_resultado(12, "Reserva de equipos cancelada")
+
+        mostrar_resultado(
+            12,
+            "Reserva de equipos cancelada"
+        )
 
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(12, str(error), False)
 
     # OPERACION 13: Intentar cancelar nuevamente
     try:
         if reserva3 is None:
-            raise ReservaInvalidaException("No existe la reserva.")
+            raise ReservaInvalidaException(
+                "No existe la reserva."
+            )
 
         sistema.cancelar_reserva(
             reserva3,
-            "Segundo intento de cancelacion"
+            "Segundo intento de cancelación"
         )
 
         raise ReservaInvalidaException(
-            "La segunda cancelacion no fue rechazada."
+            "La segunda cancelación no fue rechazada."
         )
 
     except OperacionNoPermitidaException as error:
@@ -337,12 +409,13 @@ def main():
 
         try:
             raise ReservaInvalidaException(
-                "Se controlo el intento de cancelar dos veces."
+                "Se controló el intento de cancelar dos veces."
             ) from error
 
         except ReservaInvalidaException as error_encadenado:
             print(f"\nError encadenado: {error_encadenado}")
             print(f"Causa original: {error_encadenado.__cause__}")
+
             mostrar_resultado(
                 13,
                 "Manejo de excepciones encadenadas",
@@ -352,23 +425,32 @@ def main():
     # OPERACION 14: Completar asesoria
     try:
         if reserva2 is None:
-            raise ReservaInvalidaException("No existe la reserva de asesoria.")
+            raise ReservaInvalidaException(
+                "No existe la reserva de asesoría."
+            )
 
         sistema.completar_reserva(reserva2)
 
         operaciones += 1
         exitosas += 1
-        mostrar_resultado(14, "Asesoria completada")
+
+        mostrar_resultado(
+            14,
+            "Asesoría completada"
+        )
 
     except SistemaFJException as error:
         operaciones += 1
         fallidas_controladas += 1
+
         mostrar_resultado(14, str(error), False)
 
     # OPERACION 15: Intentar utilizar un servicio no disponible
     try:
         if cliente1 is None or sala is None:
-            raise ReservaInvalidaException("No existen cliente o sala.")
+            raise ReservaInvalidaException(
+                "No existen cliente o sala."
+            )
 
         sala.marcar_no_disponible()
 
@@ -383,11 +465,26 @@ def main():
 
         operaciones += 1
         exitosas += 1
-        mostrar_resultado(15, "El servicio fue utilizado")
 
-    except ReservaInvalidaException as error:
+        mostrar_resultado(
+            15,
+            "El servicio fue utilizado"
+        )
+
+    except ServicioNoDisponibleException as error:
         operaciones += 1
         fallidas_controladas += 1
+
+        mostrar_resultado(
+            15,
+            f"Servicio no disponible correctamente controlado: {error}",
+            False
+        )
+
+    except SistemaFJException as error:
+        operaciones += 1
+        fallidas_controladas += 1
+
         mostrar_resultado(15, str(error), False)
 
     finally:
@@ -396,7 +493,7 @@ def main():
 
         print("\nProceso de pruebas finalizado.")
 
-    # Mostrar informacion general
+    # INFORME FINAL
     mostrar_titulo("INFORME FINAL DEL SISTEMA")
 
     sistema.mostrar_informacion()
@@ -406,10 +503,11 @@ def main():
     print(f"Operaciones exitosas: {exitosas}")
     print(f"Errores controlados: {fallidas_controladas}")
 
-    logger = sistema._SistemaFJ__logger
-    logger.info(
+    # Registrar los resultados mediante el acceso público al Logger
+    sistema.logger.info(
         f"Pruebas finalizadas. Operaciones: {operaciones}, "
-        f"Exitosas: {exitosas}, Errores controlados: {fallidas_controladas}"
+        f"Exitosas: {exitosas}, "
+        f"Errores controlados: {fallidas_controladas}"
     )
 
 
