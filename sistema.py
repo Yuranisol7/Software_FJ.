@@ -262,3 +262,4 @@ class SistemaFJ:
             print(f"{clave.capitalize()}: {valor}")
 
         print("=========================================")
+ 
