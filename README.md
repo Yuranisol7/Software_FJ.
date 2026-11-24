@@ -2,7 +2,7 @@
 
 ## 1. Descripción del proyecto
 
-El proyecto **Software FJ** consiste en el desarrollo de un sistema integral para gestionar clientes, servicios y reservas mediante el lenguaje de programación Python.
+El proyecto **Software FJ** consiste en el desarrollo de un sistema integral para gestionar clientes, servicios y reservas mediante el lenguaje de programación Python. 
 
 El sistema permite registrar y validar clientes, administrar diferentes tipos de servicios, realizar reservas, calcular costos y controlar las operaciones mediante excepciones personalizadas. Además, incorpora un mecanismo de registro de eventos y errores para facilitar el seguimiento de las operaciones.
 
