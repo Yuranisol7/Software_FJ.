@@ -1,4 +1,13 @@
 
+"""
+sistema.py
+==========
+Módulo central del Sistema Integral de Gestión Software FJ.
+
+Administra el registro de clientes, la creación de servicios,
+la gestión de reservas y el resumen general del sistema.
+"""
+
 from cliente import Cliente
 from servicios import (
     ReservaSala,
@@ -7,6 +16,7 @@ from servicios import (
 )
 from reserva import Reserva
 from logger import Logger
+
 from excepciones import (
     ClienteInvalidoException,
     ServicioNoDisponibleException,
@@ -21,14 +31,26 @@ class SistemaFJ:
         self.__clientes = []
         self.__servicios = []
         self.__reservas = []
+
         self.__logger = Logger.obtener_instancia()
 
         self.__logger.info("Sistema Software FJ iniciado.")
 
+    @property
+    def logger(self):
+        """Permite acceder al servicio de registro del sistema."""
+        return self.__logger
+
     def registrar_cliente(self, nombre, apellido, email,
                           telefono, documento):
+        """Registra un nuevo cliente en el sistema."""
+
         cliente = Cliente(
-            nombre, apellido, email, telefono, documento
+            nombre,
+            apellido,
+            email,
+            telefono,
+            documento
         )
 
         self.__clientes.append(cliente)
@@ -41,40 +63,64 @@ class SistemaFJ:
 
     def crear_servicio_sala(self, nombre, numero_sala,
                             capacidad=20, precio_base=50000):
+        """Crea y registra un servicio de reserva de sala."""
+
         servicio = ReservaSala(
-            nombre, numero_sala, capacidad, precio_base
+            nombre,
+            numero_sala,
+            capacidad,
+            precio_base
         )
 
         self.__servicios.append(servicio)
-        self.__logger.info(f"Servicio creado: {servicio.nombre}")
+
+        self.__logger.info(
+            f"Servicio creado: {servicio.nombre}"
+        )
 
         return servicio
 
     def crear_servicio_equipo(self, nombre, tipo_equipo,
                               cantidad_total, precio_base=30000):
-        from excepciones import ParametroFaltanteException
+        """Crea y registra un servicio de alquiler de equipos."""
 
         servicio = AlquilerEquipo(
-            nombre, tipo_equipo, cantidad_total, precio_base
+            nombre,
+            tipo_equipo,
+            cantidad_total,
+            precio_base
         )
 
         self.__servicios.append(servicio)
-        self.__logger.info(f"Servicio creado: {servicio.nombre}")
+
+        self.__logger.info(
+            f"Servicio creado: {servicio.nombre}"
+        )
 
         return servicio
 
     def crear_servicio_asesoria(self, nombre, area, asesor,
                                 precio_base=80000):
+        """Crea y registra un servicio de asesoría especializada."""
+
         servicio = AsesoriaEspecializada(
-            nombre, area, asesor, precio_base
+            nombre,
+            area,
+            asesor,
+            precio_base
         )
 
         self.__servicios.append(servicio)
-        self.__logger.info(f"Servicio creado: {servicio.nombre}")
+
+        self.__logger.info(
+            f"Servicio creado: {servicio.nombre}"
+        )
 
         return servicio
 
     def crear_reserva(self, cliente, servicio, duracion, **parametros):
+        """Crea una reserva verificando cliente y servicio."""
+
         if cliente not in self.__clientes:
             raise ClienteInvalidoException(
                 "El cliente no está registrado en el sistema."
@@ -86,7 +132,10 @@ class SistemaFJ:
             )
 
         reserva = Reserva(
-            cliente, servicio, duracion, **parametros
+            cliente,
+            servicio,
+            duracion,
+            **parametros
         )
 
         self.__reservas.append(reserva)
@@ -98,6 +147,8 @@ class SistemaFJ:
         return reserva
 
     def confirmar_reserva(self, reserva):
+        """Confirma una reserva y calcula su costo."""
+
         if reserva not in self.__reservas:
             raise OperacionNoPermitidaException(
                 "La reserva no pertenece al sistema."
@@ -112,6 +163,8 @@ class SistemaFJ:
         return costo
 
     def cancelar_reserva(self, reserva, motivo="Sin especificar"):
+        """Cancela una reserva indicando el motivo."""
+
         if reserva not in self.__reservas:
             raise OperacionNoPermitidaException(
                 "La reserva no pertenece al sistema."
@@ -126,6 +179,8 @@ class SistemaFJ:
         return True
 
     def completar_reserva(self, reserva):
+        """Marca una reserva como completada."""
+
         if reserva not in self.__reservas:
             raise OperacionNoPermitidaException(
                 "La reserva no pertenece al sistema."
@@ -133,17 +188,22 @@ class SistemaFJ:
 
         reserva.completar()
 
-        self.__logger.evento("Reserva completada.")
+        self.__logger.evento(
+            "Reserva completada."
+        )
 
         return True
 
     def listar_clientes(self):
+        """Devuelve una copia de la lista de clientes."""
         return self.__clientes.copy()
 
     def listar_servicios(self):
+        """Devuelve una copia de la lista de servicios."""
         return self.__servicios.copy()
 
     def listar_reservas(self):
+        """Devuelve una copia de la lista de reservas."""
         return self.__reservas.copy()
 
     def mostrar_resumen(self):
