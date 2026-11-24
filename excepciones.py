@@ -1,4 +1,14 @@
 
+"""
+excepciones.py
+==============
+Módulo de excepciones personalizadas del sistema Software FJ.
+
+Define una excepción general y diferentes excepciones específicas
+para controlar errores en clientes, servicios y reservas.
+"""
+
+
 class SistemaFJException(Exception):
     """Excepción general del sistema Software FJ."""
 
@@ -8,8 +18,11 @@ class SistemaFJException(Exception):
         super().__init__(mensaje)
 
     def __str__(self):
+        """Devuelve el mensaje del error y su código si existe."""
+
         if self.codigo:
             return f"[{self.codigo}] {self.mensaje}"
+
         return self.mensaje
 
 
